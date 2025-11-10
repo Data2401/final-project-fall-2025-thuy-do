@@ -34,7 +34,7 @@ I want to focus on surprising and insightful trends in the data that challenge c
 
 ```{r load-data}
 library(tidyverse)
-majors <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/all-ages.csv")
+majors <- read_csv("all-ages.csv")
 head(majors)
 ```
 
