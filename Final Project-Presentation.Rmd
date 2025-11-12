@@ -1,8 +1,8 @@
 ---
-title: "Final Project: College Majors Analysis"
+title: "Final Project-Presentation"
 author: "Thuy Minh Nhan Do"
-date: "2025-11-7"
-output: ioslides_presentation
+date: "2025-11-12"
+output: slidy_presentation
 ---
 ```{r}
 library(tidyverse)
@@ -12,30 +12,119 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 majors <- read_csv("all-ages.csv")
 ```
 
-## Title Slide
-
-**Final Project**  
-College Majors Analysis  
-*Thuy Minh Nhan Do*
-
 ## Introduction 
-- College majors influence income, job security, and workforce representation.
-- STEM majors often assumed to have highest salary and lowest unemployment. 
-- This project explores **exceptions** and patterns across all fields.
+- College majors greatly shape graduates’ income, job stability, and career direction.  
+- While many assume STEM majors always earn the most, the data reveal a more complex story.  
+- This project explores how salaries, unemployment, and major size interact to show real-world outcomes across fields.
 
 ## 1. Dataset
 
 **Dataset:** FiveThirtyEight “College Majors”  
 **Source:** [GitHub](https://github.com/fivethirtyeight/data/tree/master/college-majors)
 
-- Columns include:
+Columns include:
+
   - `Major`  
+  
   - `Major_category`  
+  
   - `Total`, `Employed`, `Employed_full_time_year_round`  
+  
   - `Unemployed`, `Unemployment_rate`  
-  - `Median`  
+  
+  - `Median`
 
-**Focus**: Salary trends, employment outcomes, graduating class sizes.
+## Why It’s Interesting
+- Compare **assumptions vs. reality**: Are STEM majors always highest-paid?  
+- Examine **employment outcomes** across majors  
+- Identify majors with **unexpectedly high/low salaries or unemployment rates**  
+- Highlight **career insights** for future graduates  
 
-## Why It's Interesting
-- Compare
+## Project Focus
+We focus on:  
+
+1. **Salary trends:** Which majors pay well? Any exceptions? 
+
+2. **Employment outcomes:** High-paying majors with high unemployment?  
+
+3. **Major size effect:** Does the number of graduates impact outcomes?  
+
+4. **Category comparison:** STEM vs. non-STEM fields  
+
+## Research Questions
+- Which majors are unexpectedly high-paying or low-paying compared to their category stereotype?
+- Are there majors with high unemployment despite high median salary, or vice versa?
+- Which majors have the top salaries overall?
+- Do larger graduating classes in a major correlate with better employment outcomes?
+
+## Salary by Major Category
+```{r}
+majors %>%
+group_by(Major_category) %>%
+summarise(avg_salary = mean(Median)) %>%
+  
+ggplot(aes(x = reorder(Major_category, avg_salary), y = avg_salary, fill = avg_salary)) +
+geom_col() +
+coord_flip() +
+labs(title = "Average Median Salary by Major Category",
+x = "Major Category",
+y = "Average Median Salary (USD)") +
+theme_minimal() +
+theme(legend.position = "none")
+```
+
+- STEM majors generally highest-paid
+
+- Business and Healthcare show strong salaries
+
+- Humanities and Arts lower on average
+
+## Median Salary vs. Unemployment Rate
+```{r}
+majors %>%
+  ggplot(aes(x=Median, y=Unemployment_rate, size=Total, color=Unemployment_rate)) +
+  geom_point(alpha=0.7) +
+  scale_size(range=c(2, 12), guide=guide_legend(title="Total Graduates")) +
+  scale_color_gradient(low="lightblue", high="darkblue", guide=guide_colorbar(title="Unemployment Rate")) +
+  scale_x_continuous(labels=scales::dollar) +
+  labs(
+    x="Median Salary",
+    y="Unemployment Rate",
+    title="Median Salary vs. Unemployment Rate, Sized by Total Graduates"
+  ) +
+  theme_minimal()
+```
+
+## Top 10 highest-paying majors
+```{r}
+top10 <- majors %>%
+arrange(desc(Median)) %>%
+slice_head(n=10)
+
+ggplot(top10, aes(x=reorder(Major, Median), y=Median)) +
+geom_segment(aes(x=Major, xend=Major, y=0, yend=Median), color="gray") +
+geom_point(color="darkred", size=4) +
+coord_flip() +
+labs(x="Major", y="Median Salary", title="Top 10 Highest-Paying Majors") +
+theme_minimal()
+
+```
+
+- Engineering and Computer Science dominate
+
+- Healthcare fields appear in top 10
+
+- Significant pay gap between top majors
+
+## Total graduates vs. unemployment rate
+```{r}
+majors %>%
+ggplot(aes(x=Total, y=Unemployment_rate)) +
+geom_point(alpha=0.6, color="purple") +
+scale_x_log10() +
+labs(x="Total Graduates", y="Unemployment Rate", title="Total Graduates vs. Unemployment Rate") +
+theme_minimal()
+
+```
+
+
