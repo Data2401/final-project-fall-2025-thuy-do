@@ -19,7 +19,7 @@ library(tidyverse)
 **What’s in it:**  
 This dataset contains information about U.S. college graduates, including:  
 - `Major` – Name of the college major  
-- `Major_category` – Category grouping like STEM, Arts, Business, or Humanities  
+- `Major_category` – Category grouping like STEM, Arts, Business, or Humanities 
 - `Total` – Total number of people with that degree
 - `Employed` / `Employed_full_time_year_round` – Number of employed graduates
 - `Median` – Median salary for graduates  
@@ -53,8 +53,8 @@ This project will analyze salary distributions, unemployment rates, and size of 
 
 **Questions I plan to ask:**  
 1. Which majors are unexpectedly high-paying or low-paying compared to their category stereotype?  
-2. How does gender balance in a major relate to salary and employment outcomes?  
-3. Are there majors with high unemployment despite high median salary, or vice versa?  
+2. Are there majors with high unemployment despite high median salary, or vice versa?  
+3. Which majors have the top salaries overall?  
 4. Do larger graduating classes in a major correlate with salary, unemployment, or gender distribution?  
 
 ## Planned Graphs (easy-to-read)
