@@ -367,34 +367,23 @@ including:<br />
 - <code>Major</code> – Name of the college major<br />
 - <code>Major_category</code> – Category grouping like STEM, Arts,
 Business, or Humanities<br />
-- <code>Total</code> – Total number of people with that degree<br />
-- <code>Men</code> / <code>Women</code> – Number of men and women
+- <code>Total</code> – Total number of people with that degree -
+<code>Employed</code> / <code>Employed_full_time_year_round</code> –
+Number of employed graduates - <code>Median</code> – Median salary for
 graduates<br />
-- <code>Median</code> – Median salary for graduates<br />
-- <code>Unemployment_rate</code> – Unemployment rate for graduates</p>
+- <code>Unemployed</code> / <code>Unemployment_rate</code> –
+Unemployment rate for graduates</p>
 <p><strong>Why it’s interesting:</strong><br />
-- Shows salary differences across majors<br />
-- Highlights gender representation in different fields<br />
-- Allows exploration of unexpected patterns, like high-paying majors
-with low female representation, or majors with high unemployment despite
-high median salaries</p>
+- Shows salary differences across majors - Highlights employment
+outcomes across different fields - Allows exploration of unexpected
+patterns, like high-paying majors with high unemployment</p>
 <p><strong>Project focus:</strong><br />
 I want to focus on surprising and insightful trends in the data that
 challenge common assumptions, such as which fields really pay well,
 which have balanced gender representation, and how employment outcomes
 vary across major categories.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-## ✔ forcats   1.0.1     ✔ stringr   1.5.2
-## ✔ ggplot2   4.0.0     ✔ tibble    3.3.0
-## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-## ✔ purrr     1.1.0     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<pre class="r"><code>majors &lt;- read_csv(&quot;all-ages.csv&quot;)</code></pre>
+<pre class="r"><code>library(tidyverse)
+majors &lt;- read_csv(&quot;all-ages.csv&quot;)</code></pre>
 <pre><code>## Rows: 173 Columns: 11
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -421,14 +410,13 @@ vary across major categories.</p>
 <div id="introduction-paragraph" class="section level2">
 <h2>2. Introduction Paragraph</h2>
 <p>College majors have a strong influence on graduates’ career outcomes,
-including income, job security, and representation in the
-workforce.<br />
+including income, job security, and representation in the workforce.
 While many assume STEM majors dominate high salaries and low
 unemployment, this dataset allows for exploration of unexpected
-exceptions and patterns across all fields.<br />
-This project will analyze salary distributions, gender representation,
-and unemployment rates to uncover insights that reveal broader trends in
-education and the labor market.</p>
+exceptions and patterns across all fields. This project will analyze
+salary distributions, unemployment rates, and size of graduating classes
+to uncover insights that reveal broader trends in education and the
+labor market.</p>
 <hr />
 </div>
 <div id="research-questions-planned-graphs" class="section level2">
@@ -447,8 +435,8 @@ unemployment, or gender distribution?</p>
 <h2>Planned Graphs (easy-to-read)</h2>
 <ul>
 <li>Bar chart: Average median salary by major category.</li>
-<li>Bubble chart: Gender balance (% women) vs. median salary, sized by
-total graduates and colored by unemployment rate.</li>
+<li>Bubble chart: Median salary vs. unemployment rate, sized by total
+graduates.</li>
 <li>Lollipop chart: Top 10 highest-paying majors.</li>
 <li>Scatter plot: Total graduates vs. unemployment rate, showing whether
 larger majors have better job outcomes.</li>

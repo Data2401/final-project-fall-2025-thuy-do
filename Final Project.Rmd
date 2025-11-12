@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 
@@ -19,15 +20,15 @@ knitr::opts_chunk$set(echo = TRUE)
 This dataset contains information about U.S. college graduates, including:  
 - `Major` – Name of the college major  
 - `Major_category` – Category grouping like STEM, Arts, Business, or Humanities  
-- `Total` – Total number of people with that degree  
-- `Men` / `Women` – Number of men and women graduates  
+- `Total` – Total number of people with that degree
+- `Employed` / `Employed_full_time_year_round` – Number of employed graduates
 - `Median` – Median salary for graduates  
-- `Unemployment_rate` – Unemployment rate for graduates  
+- `Unemployed` / `Unemployment_rate` – Unemployment rate for graduates  
 
 **Why it’s interesting:**  
-- Shows salary differences across majors  
-- Highlights gender representation in different fields  
-- Allows exploration of unexpected patterns, like high-paying majors with low female representation, or majors with high unemployment despite high median salaries  
+- Shows salary differences across majors
+- Highlights employment outcomes across different fields
+- Allows exploration of unexpected patterns, like high-paying majors with high unemployment  
 
 **Project focus:**  
 I want to focus on surprising and insightful trends in the data that challenge common assumptions, such as which fields really pay well, which have balanced gender representation, and how employment outcomes vary across major categories.
@@ -42,9 +43,9 @@ head(majors)
 
 ## 2. Introduction Paragraph
 
-College majors have a strong influence on graduates’ career outcomes, including income, job security, and representation in the workforce.  
-While many assume STEM majors dominate high salaries and low unemployment, this dataset allows for exploration of unexpected exceptions and patterns across all fields.  
-This project will analyze salary distributions, gender representation, and unemployment rates to uncover insights that reveal broader trends in education and the labor market.
+College majors have a strong influence on graduates’ career outcomes, including income, job security, and representation in the workforce.
+While many assume STEM majors dominate high salaries and low unemployment, this dataset allows for exploration of unexpected exceptions and patterns across all fields.
+This project will analyze salary distributions, unemployment rates, and size of graduating classes to uncover insights that reveal broader trends in education and the labor market.
 
 ---
 
@@ -58,7 +59,7 @@ This project will analyze salary distributions, gender representation, and unemp
 
 ## Planned Graphs (easy-to-read)
 - Bar chart: Average median salary by major category.
-- Bubble chart: Gender balance (% women) vs. median salary, sized by total graduates and colored by unemployment rate.
+- Bubble chart: Median salary vs. unemployment rate, sized by total graduates.
 - Lollipop chart: Top 10 highest-paying majors.
 - Scatter plot: Total graduates vs. unemployment rate, showing whether larger majors have better job outcomes.
 
