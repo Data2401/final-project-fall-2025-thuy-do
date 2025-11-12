@@ -25,13 +25,15 @@ This dataset contains information about U.S. college graduates, including:
 - `Median` – Median salary for graduates  
 - `Unemployed` / `Unemployment_rate` – Unemployment rate for graduates  
 
-**Why it’s interesting:**  
-- Shows salary differences across majors
-- Highlights employment outcomes across different fields
-- Allows exploration of unexpected patterns, like high-paying majors with high unemployment  
+**Why it’s interesting:** 
+
+- Compare assumptions vs. reality: Are STEM majors always highest-paid?
+- Examine employment outcomes across majors.
+- Identify majors with unexpectedly high/low salaries or unemployment rates.
+- Highlight patterns and exceptions that reveal real-world outcomes across college majors. 
 
 **Project focus:**  
-I want to focus on surprising and insightful trends in the data that challenge common assumptions, such as which fields really pay well, which have balanced gender representation, and how employment outcomes vary across major categories.
+This project focuses on uncovering patterns in salary and employment outcomes across college majors. It explores which majors stand out as particularly high or low paying and examines unemployment trends to see whether some well-paid fields also face poor job security. The analysis also identifies the top ten majors by median salary to highlight the most lucrative fields. Finally, it investigates whether larger majors with more graduates tend to experience better employment outcomes, offering insight into the relationship between popularity and job prospects.
 
 ```{r load-data}
 library(tidyverse)
@@ -42,11 +44,9 @@ head(majors)
 ---
 
 ## 2. Introduction Paragraph
-
 College majors have a strong influence on graduates’ career outcomes, including income, job security, and representation in the workforce.
 While many assume STEM majors dominate high salaries and low unemployment, this dataset allows for exploration of unexpected exceptions and patterns across all fields.
 This project will analyze salary distributions, unemployment rates, and size of graduating classes to uncover insights that reveal broader trends in education and the labor market.
-
 ---
 
 ## 3. Research Questions / Planned Graphs
@@ -55,7 +55,7 @@ This project will analyze salary distributions, unemployment rates, and size of 
 1. Which majors are unexpectedly high-paying or low-paying compared to their category stereotype?  
 2. Are there majors with high unemployment despite high median salary, or vice versa?  
 3. Which majors have the top salaries overall?  
-4. Do larger graduating classes in a major correlate with salary, unemployment, or gender distribution?  
+4. Do larger graduating classes in a major correlate with better employment outcomes?  
 
 ## Planned Graphs (easy-to-read)
 - Bar chart: Average median salary by major category.
