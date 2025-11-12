@@ -56,10 +56,10 @@ This project will analyze salary distributions, gender representation, and unemp
 3. Are there majors with high unemployment despite high median salary, or vice versa?  
 4. Do larger graduating classes in a major correlate with salary, unemployment, or gender distribution?  
 
-**Planned Graphs (easy-to-read):**  
-- Bar chart: Average median salary by major category  
-- Scatter plot: % women vs. median salary, highlighting unusual majors  
-- Bar chart: Top 10 highest-paying majors  
-- Scatter plot: Total graduates vs. median salary, showing trends for large-population majors  
+## Planned Graphs (easy-to-read)
+- Bar chart: Average median salary by major category.
+- Bubble chart: Gender balance (% women) vs. median salary, sized by total graduates and colored by unemployment rate.
+- Lollipop chart: Top 10 highest-paying majors.
+- Scatter plot: Total graduates vs. unemployment rate, showing whether larger majors have better job outcomes.
 
 ---
