@@ -4,23 +4,30 @@ author: "Thuy Minh Nhan Do"
 date: "2025-11-12"
 output: slidy_presentation
 ---
-```{r}
+```{r echo = F, message = F, warning= F}
 library(tidyverse)
 library(ggplot2)
+library(scales)
 library(ggrepel) # For labels in bubble chart
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 majors <- read_csv("all-ages.csv")
+recent <- read_csv("recent-grads.csv")
+women_stem <- read_csv("women-stem.csv")
 ```
 
 ## Introduction 
-- College majors greatly shape graduates’ income, job stability, and career direction.  
-- While many assume STEM majors always earn the most, the data reveal a more complex story.  
-- This project explores how salaries, unemployment, and major size interact to show real-world outcomes across fields.
+- College majors shape graduates’ income, job stability, and career trajectory.
+- STEM majors are often assumed to earn the most, but the data reveal a more nuanced reality.
+- This project explores salaries, unemployment, major size, gender, and income range across fields.
 
 ## 1. Dataset
 
 **Dataset:** FiveThirtyEight “College Majors”  
-**Source:** [GitHub](https://github.com/fivethirtyeight/data/tree/master/college-majors)
+**Source:** [GitHub](https://github.com/fivethirtyeight/data/tree/master/college-majors).
+
+- **all-ages.csv**: Employment & salary for all workers by major.
+- **recent-grads.csv**: Outcomes for recent graduates.
+- **women-stem.csv**: Gender representation and salaries in STEM majors.
 
 Columns include:
 
@@ -33,12 +40,15 @@ Columns include:
   - `Unemployed`, `Unemployment_rate`  
   
   - `Median`
+  - `P25th`, `P75th`
+  - `Men`, `Women`, `ShareWomen`
 
 ## Why It’s Interesting
-- Compare **assumptions vs. reality**: Are STEM majors always highest-paid?  
-- Examine **employment outcomes** across majors  
-- Identify majors with **unexpectedly high/low salaries or unemployment rates**  
-- Highlight **career insights** for future graduates  
+- Compare **assumptions vs. reality**: Are STEM majors always highest-paid?
+- Explore **gender disparities** in STEM majors.
+- Examine **employment outcomes** across majors.  
+- Identify majors with **unexpectedly high/low salaries or unemployment rates**.
+- Investigate **salary ranges (P25–P75)** for income inequality insights.  
 
 ## Project Focus
 We focus on:  
@@ -49,13 +59,20 @@ We focus on:
 
 3. **Major size effect:** Does the number of graduates impact outcomes?  
 
-4. **Category comparison:** STEM vs. non-STEM fields  
+4. **Category comparison:** STEM vs. non-STEM fields.
+
+5. **Gender representation** in STEM.
+
+6. **Income range** analysis.
 
 ## Research Questions
-- Which majors are unexpectedly high-paying or low-paying compared to their category stereotype?
-- Are there majors with high unemployment despite high median salary, or vice versa?
-- Which majors have the top salaries overall?
-- Do larger graduating classes in a major correlate with better employment outcomes?
+- Which major categories offer the highest median salaries?
+- How does median salary relate to unemployment rate across majors?
+- Which majors have the top median salaries overall?
+- Does major size correlate with unemployment rate?
+- How does salary range (P25–P75) differ across majors?
+- How does the share of women in STEM relate to median salary?
+- How does unemployment differ between all workers and recent graduates?
 
 ## Salary by Major Category
 ```{r}
@@ -79,12 +96,13 @@ theme(legend.position = "none")
 
 - Humanities and Arts lower on average
 
+
 ## Median Salary vs. Unemployment Rate
 ```{r}
 majors %>%
   ggplot(aes(x=Median, y=Unemployment_rate, size=Total, color=Unemployment_rate)) +
   geom_point(alpha=0.7) +
-  scale_size(range=c(2, 12), guide=guide_legend(title="Total Graduates")) +
+  scale_size(range=c(2, 12), guide=guide_legend(title="Total Graduates"), labels = comma) +
   scale_color_gradient(low="lightblue", high="darkblue", guide=guide_colorbar(title="Unemployment Rate")) +
   scale_x_continuous(labels=scales::dollar) +
   labs(
@@ -94,6 +112,10 @@ majors %>%
   ) +
   theme_minimal()
 ```
+
+- Higher salaries usually mean lower unemployment, but some exceptions exist.
+
+- Major size isn’t a guarantee of job security.
 
 ## Top 10 highest-paying majors
 ```{r}
@@ -110,21 +132,100 @@ theme_minimal()
 
 ```
 
-- Engineering and Computer Science dominate
+- Engineering and Computer Science dominate the top-paying majors.
 
-- Healthcare fields appear in top 10
+- Healthcare fields also appear in the top 10.
 
-- Significant pay gap between top majors
+- Large pay gaps between top majors and others.
 
 ## Total graduates vs. unemployment rate
 ```{r}
 majors %>%
 ggplot(aes(x=Total, y=Unemployment_rate)) +
-geom_point(alpha=0.6, color="purple") +
-scale_x_log10() +
+geom_point(alpha=0.6, color="orange") +
+scale_x_log10(labels = comma) +
 labs(x="Total Graduates", y="Unemployment Rate", title="Total Graduates vs. Unemployment Rate") +
 theme_minimal()
 
 ```
 
+- Larger majors show varied unemployment.
+
+- Size alone doesn’t ensure employment success.
+
+## Salary Range: P25–P75 by Major
+```{r}
+# Top 15 majors by P25th salary
+majors %>%
+  arrange(P25th) %>%
+  slice_tail(n = 15) %>%  # show only top 15
+  mutate(Major = factor(Major, levels = Major)) %>%
+  ggplot(aes(x = Major, y = P25th)) +
+  geom_col(fill = "pink") +
+  coord_flip() +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(
+    title = "25th Percentile Salary by Major (Top 15)",
+    x = "Major",
+    y = "P25th Salary (USD)"
+  ) +
+  theme_minimal()
+
+# Top 15 majors by P75th salary
+majors %>%
+  arrange(P75th) %>%
+  slice_tail(n = 15) %>%  # show only top 15
+  mutate(Major = factor(Major, levels = Major)) %>%
+  ggplot(aes(x = Major, y = P75th)) +
+  geom_col(fill = "purple") +
+  coord_flip() +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(
+    title = "75th Percentile Salary by Major (Top 15)",
+    x = "Major",
+    y = "P75th Salary (USD)"
+  ) +
+  theme_minimal()
+```
+
+- Higher share of women often correlates with lower median salaries.
+
+- Highlights potential gender pay disparity in STEM.
+
+## Unemployment: All Workers vs Recent Graduates
+```{r}
+combined <- bind_rows(
+  majors %>% select(Unemployment_rate) %>% mutate(Group = "All Workers"),
+  recent %>% select(Unemployment_rate) %>% mutate(Group = "Recent Graduates")
+)
+
+ggplot(combined, aes(x = Unemployment_rate, fill = Group)) +
+  geom_histogram(position = "dodge", bins = 20, color = "black", alpha = 0.8) +
+  scale_fill_manual(values = c("All Workers" = "lightblue", "Recent Graduates" = "darkred")) +
+  labs(
+    title = "Unemployment Rate: All Workers vs Recent Graduates",
+    x = "Unemployment Rate",
+    y = "Count",
+    fill = "Group"
+  ) +
+  theme_minimal()
+```
+
+- Recent graduates face slightly higher unemployment.
+
+- Some fields consistently low/high regardless of experience.
+
+## Summary & Key Insights
+
+- Salary Trends: STEM, Business, and Healthcare pay the most; Arts & Humanities lower.
+
+- Employment: Higher salaries often lower unemployment, size doesn't guarantee security.
+
+- Top Majors: Engineering & CS lead; Healthcare also strong.
+
+- Salary Range: Tech fields wide, Arts/Humanities narrow.
+
+- Gender in STEM: Higher female share may correlate with lower salaries.
+
+- Recent Grads: Slightly higher unemployment than all workers; some fields consistent.
 

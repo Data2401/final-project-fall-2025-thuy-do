@@ -17,7 +17,7 @@ library(tidyverse)
 **Source:** [FiveThirtyEight Data GitHub](https://github.com/fivethirtyeight/data/tree/master/college-majors)  
 
 **What’s in it:**  
-This dataset contains information about U.S. college graduates, including:  
+This database contains information about U.S. college graduates, including:  
 - `Major` – Name of the college major  
 - `Major_category` – Category grouping like STEM, Arts, Business, or Humanities 
 - `Total` – Total number of people with that degree
