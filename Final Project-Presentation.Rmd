@@ -65,6 +65,8 @@ We focus on:
 
 6. **Income range** analysis.
 
+7. **Unemployment comparison:** All workers vs. recent graduates.
+
 ## Research Questions
 - Which major categories offer the highest median salaries?
 - How does median salary relate to unemployment rate across majors?
@@ -90,12 +92,9 @@ theme_minimal() +
 theme(legend.position = "none")
 ```
 
-- STEM majors generally highest-paid
-
-- Business and Healthcare show strong salaries
-
-- Humanities and Arts lower on average
-
+- STEM majors earn the highest overall salaries.
+- Business and Healthcare also pay well.
+- Humanities and Arts generally have lower earnings.
 
 ## Median Salary vs. Unemployment Rate
 ```{r}
@@ -114,29 +113,30 @@ majors %>%
 ```
 
 - Higher salaries usually mean lower unemployment, but some exceptions exist.
-
 - Major size isn’t a guarantee of job security.
 
 ## Top 10 highest-paying majors
 ```{r}
 top10 <- majors %>%
 arrange(desc(Median)) %>%
-slice_head(n=10)
+slice_head(n = 10) %>%
+mutate(Major = fct_reorder(Major, Median))
 
-ggplot(top10, aes(x=reorder(Major, Median), y=Median)) +
-geom_segment(aes(x=Major, xend=Major, y=0, yend=Median), color="gray") +
-geom_point(color="darkred", size=4) +
+ggplot(top10, aes(x = Major, y = Median)) +
+geom_segment(aes(x = Major, xend = Major, y = 0, yend = Median), color = "gray") +
+geom_point(color = "darkred", size = 4) +
 coord_flip() +
-labs(x="Major", y="Median Salary", title="Top 10 Highest-Paying Majors") +
+scale_y_continuous(labels = dollar) +
+labs(title = "Top 10 Highest-Paying Majors",
+x = "Major",
+y = "Median Salary (USD)") +
 theme_minimal()
 
 ```
 
 - Engineering and Computer Science dominate the top-paying majors.
-
 - Healthcare fields also appear in the top 10.
-
-- Large pay gaps between top majors and others.
+- Even within the top 10, Engineering-related majors stand out with noticeably higher median salaries.
 
 ## Total graduates vs. unemployment rate
 ```{r}
@@ -149,71 +149,79 @@ theme_minimal()
 
 ```
 
-- Larger majors show varied unemployment.
-
-- Size alone doesn’t ensure employment success.
+- Smaller majors show more variability in unemployment.
+- Larger majors’unemployment rates are more consistent.
+- Major size alone does not determine job security.
 
 ## Salary Range: P25–P75 by Major
 ```{r}
-# Top 15 majors by P25th salary
-majors %>%
-  arrange(P25th) %>%
-  slice_tail(n = 15) %>%  # show only top 15
-  mutate(Major = factor(Major, levels = Major)) %>%
-  ggplot(aes(x = Major, y = P25th)) +
-  geom_col(fill = "pink") +
-  coord_flip() +
-  scale_y_continuous(labels = scales::dollar) +
-  labs(
-    title = "25th Percentile Salary by Major (Top 15)",
-    x = "Major",
-    y = "P25th Salary (USD)"
-  ) +
-  theme_minimal()
+top15_median <- majors %>%
+arrange(desc(Median)) %>%
+slice_head(n = 15) %>%
+mutate(Major = fct_reorder(Major, Median))
 
-# Top 15 majors by P75th salary
-majors %>%
-  arrange(P75th) %>%
-  slice_tail(n = 15) %>%  # show only top 15
-  mutate(Major = factor(Major, levels = Major)) %>%
-  ggplot(aes(x = Major, y = P75th)) +
-  geom_col(fill = "purple") +
-  coord_flip() +
-  scale_y_continuous(labels = scales::dollar) +
-  labs(
-    title = "75th Percentile Salary by Major (Top 15)",
-    x = "Major",
-    y = "P75th Salary (USD)"
-  ) +
-  theme_minimal()
+ggplot(top15_median, aes(x = Major, y = Median)) +
+geom_point(size = 3, color = "darkred") +
+geom_errorbar(aes(ymin = P25th, ymax = P75th), width = 0.2, color = "gray") +
+coord_flip() +
+scale_y_continuous(labels = dollar) +
+labs(title = "Top 15 Majors: Median with P25–P75 Range",
+x = "Major",
+y = "Salary (USD)") +
+theme_minimal()
+
 ```
 
-- Higher share of women often correlates with lower median salaries.
+- Shows median salary and P25–P75 range for top 15 majors.
+- Technical/Engineering fields have the widest ranges.
+- Highlights variability in earnings within each major.
 
-- Highlights potential gender pay disparity in STEM.
+##Median Salary vs Share of Women in STEM
+```{r}
+women_stem %>%
+  ggplot(aes(x = ShareWomen, y = Median)) +
+  geom_point(alpha = 0.7, color = "purple") +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    alpha = 0.15,       
+    color = "black",
+    fill = "purple"       
+  ) +
+  scale_y_continuous(labels = dollar) +
+  labs(
+    title = "Share of Women vs Median Salary in STEM Majors",
+    x = "Share of Women",
+    y = "Median Salary (USD)"
+  ) +
+  theme_minimal()
+
+```
+
+- Plots share of women vs median salary in STEM majors.
+- Shows a slight negative trend: higher female share often links to lower median salaries.
+- Highlights potential gender pay disparities within STEM fields.
 
 ## Unemployment: All Workers vs Recent Graduates
 ```{r}
 combined <- bind_rows(
-  majors %>% select(Unemployment_rate) %>% mutate(Group = "All Workers"),
-  recent %>% select(Unemployment_rate) %>% mutate(Group = "Recent Graduates")
+majors %>% select(Unemployment_rate) %>% mutate(Group = "All Workers"),
+recent %>% select(Unemployment_rate) %>% mutate(Group = "Recent Graduates")
 )
 
-ggplot(combined, aes(x = Unemployment_rate, fill = Group)) +
-  geom_histogram(position = "dodge", bins = 20, color = "black", alpha = 0.8) +
-  scale_fill_manual(values = c("All Workers" = "lightblue", "Recent Graduates" = "darkred")) +
-  labs(
-    title = "Unemployment Rate: All Workers vs Recent Graduates",
-    x = "Unemployment Rate",
-    y = "Count",
-    fill = "Group"
-  ) +
-  theme_minimal()
+ggplot(combined, aes(x = Unemployment_rate, color = Group, fill = Group)) +
+geom_density(alpha = 0.3) +
+labs(title = "Unemployment Rate Distribution: All Workers vs Recent Graduates",
+x = "Unemployment Rate",
+y = "Density") +
+theme_minimal()
+
+
 ```
 
-- Recent graduates face slightly higher unemployment.
-
-- Some fields consistently low/high regardless of experience.
+- Compares unemployment rate distributions for all workers vs recent graduates.
+- Recent graduates tend to have slightly higher unemployment.
+- Some fields remain consistently low or high regardless of experience.
 
 ## Summary & Key Insights
 
