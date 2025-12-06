@@ -176,7 +176,7 @@ theme_minimal()
 - Technical/Engineering fields have the widest ranges.
 - Highlights variability in earnings within each major.
 
-##Median Salary vs Share of Women in STEM
+## Median Salary vs Share of Women in STEM
 ```{r}
 women_stem %>%
   ggplot(aes(x = ShareWomen, y = Median)) +

@@ -8,6 +8,13 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(ggplot2)
+library(scales)
+library(ggrepel) 
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+majors <- read_csv("all-ages.csv")
+recent <- read_csv("recent-grads.csv")
+women_stem <- read_csv("women-stem.csv")
 ```
 
 
@@ -17,50 +24,225 @@ library(tidyverse)
 **Source:** [FiveThirtyEight Data GitHub](https://github.com/fivethirtyeight/data/tree/master/college-majors)  
 
 **What’s in it:**  
+
+- **all-ages.csv**: Employment & salary for all workers by major.
+
+- **recent-grads.csv**: Outcomes for recent graduates.
+
+- **women-stem.csv**: Gender representation and salaries in STEM majors.
+
 This database contains information about U.S. college graduates, including:  
+
 - `Major` – Name of the college major  
+
 - `Major_category` – Category grouping like STEM, Arts, Business, or Humanities 
+
 - `Total` – Total number of people with that degree
+
 - `Employed` / `Employed_full_time_year_round` – Number of employed graduates
+
 - `Median` – Median salary for graduates  
-- `Unemployed` / `Unemployment_rate` – Unemployment rate for graduates  
 
-**Why it’s interesting:** 
+- `Unemployed` / `Unemployment_rate` – Unemployment rate for graduates 
 
-- Compare assumptions vs. reality: Are STEM majors always highest-paid?
-- Examine employment outcomes across majors.
-- Identify majors with unexpectedly high/low salaries or unemployment rates.
-- Highlight patterns and exceptions that reveal real-world outcomes across college majors. 
+- `P25th`, `P75th` - 25th and 75th percentile salaries in a major.
+
+- `Women` / `Men` – Number of graduates by gender.
+
+- `ShareWomen` – Proportion of women in the major.
 
 **Project focus:**  
-This project focuses on uncovering patterns in salary and employment outcomes across college majors. It explores which majors stand out as particularly high or low paying and examines unemployment trends to see whether some well-paid fields also face poor job security. The analysis also identifies the top ten majors by median salary to highlight the most lucrative fields. Finally, it investigates whether larger majors with more graduates tend to experience better employment outcomes, offering insight into the relationship between popularity and job prospects.
 
-```{r load-data}
-library(tidyverse)
-majors <- read_csv("all-ages.csv")
-head(majors)
-```
+This project focuses on uncovering patterns in salary and employment outcomes across college majors. It explores which majors stand out as particularly high or low paying and examines unemployment trends to see whether some well-paid fields also face poor job security. The analysis also identifies the top ten majors by median salary to highlight the most lucrative fields. Finally, it investigates whether larger majors with more graduates tend to experience better employment outcomes, offering insight into the relationship between popularity and job prospects.
 
 ---
 
-## 2. Introduction Paragraph
-College majors have a strong influence on graduates’ career outcomes, including income, job security, and representation in the workforce.
-While many assume STEM majors dominate high salaries and low unemployment, this dataset allows for exploration of unexpected exceptions and patterns across all fields.
-This project will analyze salary distributions, unemployment rates, and size of graduating classes to uncover insights that reveal broader trends in education and the labor market.
+## 2. Introduction
+
+College majors significantly influence salary, career stability, and job opportunities after graduation. While many assume that STEM majors earn the most and face the lowest unemployment, real-world data show more complex patterns. This project analyzes salary distributions, unemployment rates, major size, and gender representation across college majors using data from FiveThirtyEight. The goal is to uncover trends and exceptions, providing a detailed picture of employment and income outcomes in the U.S. workforce.
+
 ---
 
 ## 3. Research Questions / Planned Graphs
 
 **Questions I plan to ask:**  
-1. Which majors are unexpectedly high-paying or low-paying compared to their category stereotype?  
-2. Are there majors with high unemployment despite high median salary, or vice versa?  
-3. Which majors have the top salaries overall?  
-4. Do larger graduating classes in a major correlate with better employment outcomes?  
 
-## Planned Graphs (easy-to-read)
-- Bar chart: Average median salary by major category.
-- Bubble chart: Median salary vs. unemployment rate, sized by total graduates.
-- Lollipop chart: Top 10 highest-paying majors.
-- Scatter plot: Total graduates vs. unemployment rate, showing whether larger majors have better job outcomes.
+- Which major categories offer the highest median salaries?
+
+- How does median salary relate to unemployment rate across majors?
+
+- Which majors have the top median salaries overall?
+
+- Does major size correlate with unemployment rate?
+
+- How does salary range (P25–P75) differ across majors?
+
+- How does the share of women in STEM relate to median salary?
+
+- How does unemployment differ between all workers and recent graduates?
 
 ---
+
+## 4. Analysis & Visualizations
+
+**1. Average Median Salary by Major Category**
+
+To examine broad trends in earnings, we grouped majors by category and calculated the average median salary. STEM majors have the highest average earnings, around $75,000, followed by Business and Healthcare fields, which average near $60,000. Arts and Humanities majors are at the lower end, averaging about $45,000. This comparison reveals how major category strongly impacts financial outcomes for graduates.
+
+```{r}
+majors %>%
+group_by(Major_category) %>%
+summarise(avg_salary = mean(Median)) %>%
+  
+ggplot(aes(x = reorder(Major_category, avg_salary), y = avg_salary, fill = avg_salary)) +
+geom_col() +
+coord_flip() +
+labs(title = "Average Median Salary by Major Category",
+x = "Major Category",
+y = "Average Median Salary (USD)") +
+theme_minimal() +
+theme(legend.position = "none")
+```
+
+The bar chart confirms that STEM majors clearly dominate earnings, while Business and Healthcare are moderate, and Arts/Humanities are lower. This visualization makes it easy to compare categories and identify which majors provide the best financial outcomes.
+
+**2. Median Salary vs. Unemployment Rate**
+
+We analyzed the relationship between salary and unemployment by plotting each major on a scatter plot. High-paying majors generally have lower unemployment rates, but there are exceptions. Some Arts and Social Science majors maintain moderate unemployment despite modest earnings, while a few Business and Social Science fields have higher unemployment. This plot also considers total graduates, showing that major size can influence outcomes but is not a guarantee of job security.
+
+```{r}
+majors %>%
+  ggplot(aes(x=Median, y=Unemployment_rate, size=Total, color=Unemployment_rate)) +
+  geom_point(alpha=0.7) +
+  scale_size(range=c(2, 12), guide=guide_legend(title="Total Graduates"), labels = comma) +
+  scale_color_gradient(low="lightblue", high="darkblue", guide=guide_colorbar(title="Unemployment Rate")) +
+  scale_x_continuous(labels=scales::dollar) +
+  labs(
+    x="Median Salary",
+    y="Unemployment Rate",
+    title="Median Salary vs. Unemployment Rate, Sized by Total Graduates"
+  ) +
+  theme_minimal()
+```
+
+The scatter plot highlights both trends and outliers. It demonstrates that while high salary usually correlates with low unemployment, some majors defy the pattern. Bubbles representing larger majors cluster near consistent outcomes, while smaller majors vary widely.
+
+**3. Top 10 Highest-Paying Majors**
+
+We identified the top 10 highest-paying majors by median salary. Engineering disciplines dominate, with Petroleum Engineering at $110,000, followed by Computer Science and Chemical Engineering. Healthcare fields appear as well, but STEM fields clearly lead.
+
+```{r}
+top10 <- majors %>%
+arrange(desc(Median)) %>%
+slice_head(n = 10) %>%
+mutate(Major = fct_reorder(Major, Median))
+```
+
+```{r}
+ggplot(top10, aes(x = Major, y = Median)) +
+geom_segment(aes(x = Major, xend = Major, y = 0, yend = Median), color = "gray") +
+geom_point(color = "darkred", size = 4) +
+coord_flip() +
+scale_y_continuous(labels = dollar) +
+labs(title = "Top 10 Highest-Paying Majors",
+x = "Major",
+y = "Median Salary (USD)") +
+theme_minimal()
+```
+
+The lollipop chart clearly shows the dominance of technical majors. It also emphasizes differences within the top 10, highlighting how certain engineering majors far exceed others in median salary.
+
+**4. Total Graduates vs. Unemployment Rate**
+
+We explored how major size affects unemployment. Smaller majors show wide variability, with some experiencing high or low unemployment. Larger majors exhibit more consistent outcomes, though size alone is not determinative.
+
+```{r}
+majors %>%
+ggplot(aes(x=Total, y=Unemployment_rate)) +
+geom_point(alpha=0.6, color="orange") +
+scale_x_log10(labels = comma) +
+labs(x="Total Graduates", y="Unemployment Rate", title="Total Graduates vs. Unemployment Rate") +
+theme_minimal()
+```
+
+The scatter plot demonstrates these trends. Using a log scale allows us to compare small and large majors clearly, revealing patterns that might not be visible on a linear scale.
+
+**5. Salary Range (P25–P75) for Top Majors**
+
+To examine variability in earnings, we plotted median salary along with the 25th and 75th percentile for the top 15 majors. Technical fields, especially engineering, show the widest salary ranges, while Arts and Humanities are narrower. This highlights both expected earnings and variability within each major.
+
+```{r}
+top15_median <- majors %>%
+arrange(desc(Median)) %>%
+slice_head(n = 15) %>%
+mutate(Major = fct_reorder(Major, Median))
+```
+
+```{r}
+ggplot(top15_median, aes(x = Major, y = Median)) +
+geom_point(size = 3, color = "darkred") +
+geom_errorbar(aes(ymin = P25th, ymax = P75th), width = 0.2, color = "gray") +
+coord_flip() +
+scale_y_continuous(labels = dollar) +
+labs(title = "Top 15 Majors: Median with P25–P75 Range",
+x = "Major",
+y = "Salary (USD)") +
+theme_minimal()
+```
+
+The chart shows that even within high-paying majors, individual earnings can vary significantly, which is useful for understanding potential income outcomes for graduates.
+
+**6. Share of Women vs. Median Salary in STEM**
+
+We analyzed gender representation in STEM majors by plotting share of women against median salary. Majors with higher female representation generally show slightly lower median salaries. While not conclusive, this trend suggests possible gender pay disparities within STEM fields.
+
+```{r}
+women_stem %>%
+  ggplot(aes(x = ShareWomen, y = Median)) +
+  geom_point(alpha = 0.7, color = "purple") +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    alpha = 0.15,       
+    color = "black",
+    fill = "purple"       
+  ) +
+  scale_y_continuous(labels = dollar) +
+  labs(
+    title = "Share of Women vs Median Salary in STEM Majors",
+    x = "Share of Women",
+    y = "Median Salary (USD)"
+  ) +
+  theme_minimal()
+
+```
+
+The scatter plot and trendline indicate a slight negative relationship, showing that higher female representation may be associated with lower median salary. This provides insight into gender equity in STEM.
+
+**7. Unemployment: All Workers vs. Recent Graduates**
+
+Finally, we compared unemployment rates for all workers versus recent graduates. Recent graduates generally experience slightly higher unemployment, reflecting entry-level challenges. Some majors remain consistently low or high, suggesting field-specific factors dominate over experience level.
+
+```{r}
+combined <- bind_rows(
+majors %>% select(Unemployment_rate) %>% mutate(Group = "All Workers"),
+recent %>% select(Unemployment_rate) %>% mutate(Group = "Recent Graduates")
+)
+
+ggplot(combined, aes(x = Unemployment_rate, color = Group, fill = Group)) +
+geom_density(alpha = 0.3) +
+labs(title = "Unemployment Rate Distribution: All Workers vs Recent Graduates",
+x = "Unemployment Rate",
+y = "Density") +
+theme_minimal()
+
+```
+
+The density plot clearly shows differences between recent graduates and all workers, highlighting that experience and time in the workforce influence employment outcomes.
+
+---
+## Summary 
+Across all analyses, several trends emerge. STEM, Business, and Healthcare majors pay the most, while Arts and Humanities earn less. Employment generally improves with higher salaries, though major size does not guarantee security. Engineering dominates top-paying majors, while salary variability is highest in technical fields. Gender representation in STEM may correlate with slightly lower salaries. Finally, recent graduates face slightly higher unemployment, though some majors remain stable regardless of experience. This analysis provides a detailed picture of education, employment, and income patterns across U.S. college majors.
+
+
+
