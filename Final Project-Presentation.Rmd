@@ -1,5 +1,5 @@
 ---
-title: "Final Project-Presentation"
+title: "College Majors"
 author: "Thuy Minh Nhan Do"
 date: "2025-11-12"
 output: slidy_presentation
