@@ -2,7 +2,10 @@
 title: "Final Project"
 author: "Thuy Minh Nhan Do"
 date: "2025-11-7"
-output: html_document
+output: 
+  html_document: 
+    highlight: tango
+    theme: cosmo
 ---
 
 ```{r setup, include=FALSE}
@@ -36,7 +39,6 @@ This database contains information about U.S. college graduates, including:
 - `Major` – Name of the college major  
 
 - `Major_category` – Category grouping like STEM, Arts, Business, or Humanities 
-
 - `Total` – Total number of people with that degree
 
 - `Employed` / `Employed_full_time_year_round` – Number of employed graduates
@@ -53,7 +55,7 @@ This database contains information about U.S. college graduates, including:
 
 **Project focus:**  
 
-This project focuses on uncovering patterns in salary and employment outcomes across college majors. It explores which majors stand out as particularly high or low paying and examines unemployment trends to see whether some well-paid fields also face poor job security. The analysis also identifies the top ten majors by median salary to highlight the most lucrative fields. Finally, it investigates whether larger majors with more graduates tend to experience better employment outcomes, offering insight into the relationship between popularity and job prospects.
+This project focuses on uncovering patterns in salary and employment outcomes across college majors. It explores which majors stand out as particularly high or low paying and examines unemployment trends to see whether some well-paid fields also face poor job security. The analysis also identifies the top ten majors by median salary to highlight the most profitable fields. Finally, it investigates whether larger majors with more graduates tend to experience better employment outcomes, offering insight into the relationship between popularity and job prospects.
 
 ---
 
@@ -125,7 +127,7 @@ majors %>%
   theme_minimal()
 ```
 
-The scatter plot highlights both trends and outliers. It demonstrates that while high salary usually correlates with low unemployment, some majors defy the pattern. Bubbles representing larger majors cluster near consistent outcomes, while smaller majors vary widely.
+The scatter plot highlights both general trends and notable exceptions. It shows that while higher salaries usually correlate with lower unemployment, some majors defy this pattern. Bubbles representing larger majors cluster around consistent outcomes, while smaller majors vary more widely.
 
 **3. Top 10 Highest-Paying Majors**
 
@@ -154,7 +156,7 @@ The lollipop chart clearly shows the dominance of technical majors. It also emph
 
 **4. Total Graduates vs. Unemployment Rate**
 
-We explored how major size affects unemployment. Smaller majors show wide variability, with some experiencing high or low unemployment. Larger majors exhibit more consistent outcomes, though size alone is not determinative.
+We explored how major size affects unemployment. Smaller majors show wide variability, with some experiencing high or low unemployment. Larger majors exhibit more consistent outcomes, though size alone does not determine the outcome.
 
 ```{r}
 majors %>%
@@ -217,7 +219,7 @@ women_stem %>%
 
 ```
 
-The scatter plot and trendline indicate a slight negative relationship, showing that higher female representation may be associated with lower median salary. This provides insight into gender equity in STEM.
+The scatter plot and trend line indicate a slight negative relationship, showing that higher female representation may be associated with lower median salary. This provides insight into gender equity in STEM.
 
 **7. Unemployment: All Workers vs. Recent Graduates**
 
